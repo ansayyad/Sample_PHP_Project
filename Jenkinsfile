@@ -22,8 +22,7 @@ pipeline {
                expression {env.BRANCH_NAME == 'master'}
             }                     
             steps {
-                script {
-                   
+                script{ 
                         def tag = sh(returnStdout: true, script: "git tag | tail -1").trim()
                         println tag
                         def semVerLib = load 'SemVer.groovy'
@@ -35,12 +34,10 @@ pipeline {
                                 -m "Job: ${env.JOB_NAME}" \
                                 -m "Build: ${env.BUILD_NUMBER}"
                             git push --tags
-                        """
-                    
+                        """               
                 }
               }
                 
             }
         }
   }
-}
