@@ -11,11 +11,11 @@ pipeline {
   }
 
   stages {
-    stage('PHPUnit Test') {
-      steps {
-        echo 'Running PHPUnit...'
-        sh '/bin/phpunit ${WORKSPACE}/src'
-      }
+    /* stage('PHPUnit Test') {
+     * steps {
+      *  echo 'Running PHPUnit...'
+       * sh '/bin/phpunit ${WORKSPACE}/src'
+      } */
     }
   stage("Create new tag") {
          when {
