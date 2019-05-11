@@ -6,31 +6,29 @@ pipeline {
     }
   }
 
-  options {
-    timestamps()
-  }
+
 
   stages {
-    /* stage('PHPUnit Test') {
-     * steps {
-      *  echo 'Running PHPUnit...'
-       * sh '/bin/phpunit ${WORKSPACE}/src'
-      } 
-    }*/
-  stage("Create new tag") {
+//    stage('PHPUnit Test') {
+//      steps {
+//       echo 'Running PHPUnit...'
+//       sh '/bin/phpunit ${WORKSPACE}/src'
+//     }
+//   }
+ stage("Create new tag") {
          when {
                expression {env.BRANCH_NAME == 'master'}
             }                     
             steps {
-	       sshagent (credentials: ['key'])
-	          {
-                script{ 
-                        sh "git config --add remote.origin.fetch +refs/heads/master:refs/remotes/origin/master"
-                        sh "git fetch"
+             sshagent (credentials: ['jenkins-secret-text'])                        
+                {
+                script {
+                   	sh "git config --add remote.origin.fetch +refs/heads/master:refs/remotes/origin/master"
+			sh "git fetch"
                         def tag = sh(returnStdout: true, script: "git tag | tail -1").trim()
                         println tag
-                        def semVerLib = load 'SemVer.groovy'
-                        def version = semVerLib.getTagversion(tag)
+//                        def semVerLib = load 'SemVer.groovy'
+                        def version = getTagversion(tag)
                         println version
                         sh """
                             git tag -a "v${version}" \
@@ -38,15 +36,16 @@ pipeline {
                                 -m "Job: ${env.JOB_NAME}" \
                                 -m "Build: ${env.BUILD_NUMBER}"
                             git push --tags
-                        """               
+                        """
+                    
                 }
               }
                 
             }
         }
+ 
   }
 }
-
 def getTagversion (String oldtagVersion)
 {
     oldtagVersion = oldtagVersion.substring(1)
